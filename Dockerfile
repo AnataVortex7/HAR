@@ -39,7 +39,6 @@ RUN apt-get update && apt-get install -y \
     libwoff1 \
     libopus0 \
     libwebp7 \          # Updated from libwebp6
-    libenchant-2-2 \
     libhyphen0 \
     libgudev-1.0-0 \
     libsecret-1-0 \
