@@ -1,0 +1,30 @@
+{ pkgs }: {
+  deps = [
+    pkgs.ffmpeg
+    pkgs.python310
+    pkgs.python310Packages.pip
+    pkgs.playwright
+    pkgs.nodejs
+    pkgs.libxkbcommon
+    pkgs.libdrm
+    pkgs.glib
+    pkgs.nss
+    pkgs.atk
+    pkgs.cups
+    pkgs.gtk3
+    pkgs.libxcomposite
+    pkgs.libxdamage
+    pkgs.libxrandr
+    pkgs.xorg.libX11
+    pkgs.xorg.libxcb
+    pkgs.xorg.libXcomposite
+    pkgs.xorg.libXdamage
+    pkgs.xorg.libXext
+    pkgs.xorg.libXfixes
+    pkgs.xorg.libXrandr
+    pkgs.xorg.libxshmfence
+    pkgs.xorg.libxkbfile
+    pkgs.xorg.libXScrnSaver
+    pkgs.alsaLib
+  ];
+}
