@@ -60,7 +60,7 @@ RUN apt-get update && apt-get install -y \
     libgbm.so.1 \
     libxcb.so.1 \
     libxkbcommon.so.0 \
-    libasound.so.2 \ 
+    libasound.so.2 
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
