@@ -1,0 +1,3 @@
+run = "bash setup.sh"
+language = "python"
+entrypoint = "main.py"
