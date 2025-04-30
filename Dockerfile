@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /app
 COPY . .
 
-# Install system dependencies
+# Install system dependencies for Playwright Chromium
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -34,40 +34,18 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1 \
     libxss1 \
     libxtst6 \
-    # Additional dependencies
     libwebpdemux2 \
     libwoff1 \
     libopus0 \
-    libwebp7 \          
-    libgdk-pixbuf2.0-0 \ 
-    libglib-2.0.so.0 \
-    libgobject-2.0.so.0 \
-    libnss3.so \
-    libnssutil3.so \
-    libnspr4.so \
-    libdbus-1.so.3 \
-    libatk-1.0.so.0 \
-    libatk-bridge-2.0.so.0 \
-    libgio-2.0.so.0 \
-    libexpat.so.1 \
-    libatspi.so.0 \
-    libX11.so.6 \
-    libXcomposite.so.1 \
-    libXdamage.so.1 \
-    libXext.so.6 \
-    libXfixes.so.3 \
-    libXrandr.so.2\
-    libgbm.so.1 \
-    libxcb.so.1 \
-    libxkbcommon.so.0 \
-    libasound.so.20 \
-    
-    && rm -rf /var/lib/apt/lists/*
+    libwebp7 \
+    libgdk-pixbuf2.0-0 \
+    libatspi2.0-0 \
+    --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers AFTER pip install
+# Install Playwright Chromium
 RUN playwright install chromium
 
 CMD ["python", "main.py"]
