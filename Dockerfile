@@ -38,9 +38,8 @@ RUN apt-get update && apt-get install -y \
     libwebpdemux2 \
     libwoff1 \
     libopus0 \
-    libwebp7 \          # Updated from libwebp6
-    libgdk-pixbuf2.0-0 \ # Newly added
-    # Clean up
+    libwebp7 \          
+    libgdk-pixbuf2.0-0 \ 
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
