@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /app
 COPY . .
 
-# Install system dependencies needed for Chromium
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -34,26 +34,29 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1 \
     libxss1 \
     libxtst6 \
-    # Additional dependencies from Playwright docs
+    # Additional dependencies
     libwebpdemux2 \
     libwoff1 \
     libopus0 \
-    libwebp6 \
+    libwebp7 \          # Updated from libwebp6
     libenchant-2-2 \
     libhyphen0 \
     libgudev-1.0-0 \
     libsecret-1-0 \
     libegl1 \
     libnotify4 \
-    libvpx7 \
+    libvpx8 \           # Updated from libvpx7
     libsqlite3-0 \
+    libharfbuzz0b \     # Newly added
+    libatspi2.0-0 \     # Newly added
+    libgdk-pixbuf2.0-0 \ # Newly added
     # Clean up
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
+# Install Playwright browsers AFTER pip install
 RUN playwright install chromium
 
 CMD ["python", "main.py"]
