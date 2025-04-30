@@ -39,9 +39,6 @@ RUN apt-get update && apt-get install -y \
     libwoff1 \
     libopus0 \
     libwebp7 \          # Updated from libwebp6
-    libvpx7 \
-    libsqlite3-0 \
-    libharfbuzz0b \     # Newly added
     libatspi2.0-0 \     # Newly added
     libgdk-pixbuf2.0-0 \ # Newly added
     # Clean up
