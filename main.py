@@ -1,4 +1,5 @@
-import os
+import subprocess
+subprocess.run(["playwright", "install", "chromium"])import os
 import asyncio
 import threading
 import traceback
