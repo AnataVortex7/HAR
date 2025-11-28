@@ -1,66 +1,59 @@
-import os
-import asyncio
+import logging
 from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
 )
+logger = logging.getLogger(__name__)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID", "0"))
 
-# -------------------------
-#   SAFE HEARTBEAT
-# -------------------------
-async def heartbeat(app):
-    while True:
-        try:
-            # silent ping to Telegram so the container stays "active"
-            await app.bot.get_me()
-        except Exception as e:
-            # only notify owner on real errors
-            try:
-                if OWNER_ID:
-                    await app.bot.send_message(chat_id=OWNER_ID, text=f"❌ Heartbeat Error: {e}")
-            except Exception:
-                # ignore notification errors
-                pass
-        await asyncio.sleep(4)   # every 4 seconds
 
-# -------------------------
-#   /start command
-# -------------------------
+# /start → user ID मिळतो
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    uid = user.id
-    name = user.first_name or user.username or "Unknown"
+    await update.message.reply_text(
+        f"👋 Hello {user.first_name}!\n"
+        f"Your Telegram ID: `{user.id}`\n\n"
+        f"Stay connected!"
+    )
 
-    await update.message.reply_text("Wait for CP Code...\nStay Connected ⭐")
 
-    msg = f"🔔 New User Started Bot\n\n👤 Name: {name}\n🆔 User ID: {uid}"
-    # send to owner (if set)
-    if OWNER_ID:
-        try:
-            await context.bot.send_message(chat_id=OWNER_ID, text=msg)
-        except Exception as e:
-            print("Failed to send new-user message to owner:", e)
+# /id command → कोणत्याही user ची ID पाहायला
+async def myid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    await update.message.reply_text(f"Your ID: `{user.id}`")
 
-# -------------------------
-#   MAIN BOT RUNNER
-# -------------------------
+
+# Bot मध्ये err आला तर फक्त owner ला DM
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    error_text = f"⚠ ERROR:\n{context.error}"
+
+    try:
+        await context.bot.send_message(chat_id=OWNER_ID, text=error_text)
+    except:
+        pass
+
+    logger.error("Exception while handling:", exc_info=context.error)
+
+
 async def main():
-    if not BOT_TOKEN:
-        raise RuntimeError("BOT_TOKEN is not set in environment variables")
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Commands
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("id", myid))
 
-    # Start silent heartbeat in background
-    asyncio.create_task(heartbeat(app))
+    # Error handler
+    app.add_error_handler(error_handler)
 
-    print("Bot is running with safe heartbeat…")
+    # Start bot
     await app.run_polling()
 
+
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())
