@@ -1,11 +1,18 @@
 import os
+import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from aiohttp import web
 
+# -------------------------
+# Environment variables
+# -------------------------
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-OWNER_ID = int(os.getenv("OWNER_ID", "0"))  # Owner Telegram ID
+OWNER_ID = int(os.getenv("OWNER_ID", "0"))  # replace with your Telegram ID or use env
 
+# -------------------------
 # /start command
+# -------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
@@ -26,13 +33,37 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Hello {first_name}! 👋\nStay connected ⭐"
     )
 
+# -------------------------
+# Minimal HTTP server for health check
+# -------------------------
+async def handle(request):
+    return web.Response(text="OK")
 
-def main():
+async def run_web():
+    app = web.Application()
+    app.router.add_get("/", handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    await site.start()
+    print("Web server running on port 8080")
+
+# -------------------------
+# Main bot function
+# -------------------------
+async def main():
+    # Start Telegram bot
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
-    print("Bot is starting…")
-    app.run_polling()
 
+    # Start minimal web server for health check
+    asyncio.create_task(run_web())
 
+    print("Bot and web server starting…")
+    await app.run_polling()
+
+# -------------------------
+# Run
+# -------------------------
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
